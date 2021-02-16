@@ -47,6 +47,7 @@ function preload() {
   images[2] = loadImage('assets/three.png');
   images[3] = loadImage('assets/four.png');
   images[4] = loadImage('assets/five.png');
+  images[5] = loadImage('assets/splash.png');
 }
 
 // Center drawing, drawFunction will be one for default
@@ -59,7 +60,7 @@ function setup() {
   textSize(24);
 
   // set to one for startup
-  drawFunction = drawOne;
+  drawFunction = drawSplash;
 }
 
 // Very simple, sets the background color and calls your state machine function
@@ -71,6 +72,11 @@ function draw() {
 }
 
 //========= TEMPLATE: modify these functions, INSIDE the function blocks only =========
+
+//-- drawSplash() will draw the image at index 5 from the array
+drawSplash = function() {
+   image(images[5],width/2, height/2);
+}
 
 //-- drawOne() will draw the image at index 0 from the array
 drawOne = function() {
@@ -117,6 +123,10 @@ drawFive = function() {
 
 // Change the drawFunction variable based on your interaction
 function keyTyped() {
+  if( drawFunction === drawSplash ) {
+    return;
+  }
+
   if( key === '1' ) {
   	drawFunction = drawOne;
   }
@@ -131,5 +141,16 @@ function keyTyped() {
   }
   else if( key === '5' ) {
   	drawFunction = drawFive;
+  }
+
+  else if( key === 's' ) {
+    drawFunction = drawSplash;
+  }
+}
+
+function mousePressed() {
+  // only change state if we are in splash screen
+  if( drawFunction === drawSplash ) {
+    drawFunction = drawOne;
   }
 }
