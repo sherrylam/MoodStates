@@ -1,32 +1,13 @@
 /***********************************************************************************
-	SimpleStateMachine - TEMPLATE
-	by Scott Kildall
+	Mood States
+	by Sherry Lam
 
-	Template:
-
-	(1) Add your own PNG files in the assets folder. Make sure they match the names ***exactly*** of the existing PNGs.
-	(2) Add custom drawing code to drawOne(), drawTwo(), drawThree(), drawFour(), drawFive()
-	(3) You can add your own interfaces - keys, mouse events, etc in the Interfaces section
-
-	Also start your localhost before running this, otherwise no PNGs will display
-
-------------------------------------------------------------------------------------
-	The way it works — you don't need to know this for the template use
-	* array of images gets loaded at startup
-	* drawFunction is a VARIABLE that points to a function varible name
-	* drawOne(), drawTwo(), etc. are set to be functions.
-	* the the keys 1-5 will change the drawFunction variable
+	Overview:
+  This is a series of mood drawings with a splash and instructions page.
 
 ------------------------------------------------------------------------------------
 	Notes:
-	- a more advanced state machine with use array-indexing for each of
-		images the draw functions, but this is just for illustrative purposes
 
-	- even more advanced will be to put the draw functions into an array, would
-		be helpful for randomizing, go to the next function, etc
-
-	- next step after that would be to put interfaces into an array that maps to
-		the functions
 
 
 ***********************************************************************************/
@@ -34,11 +15,18 @@
 // Array of images
 var images = [];
 
+// Array of strings
+var strings = [];
+
 // variable that is a function 
 var drawFunction;
 
 // offset from bottom of screen
 var gTextOffset = 20;
+
+var lineHeight;
+
+var size = 32;
 
 // load all images into an array
 function preload() {
@@ -57,15 +45,27 @@ function setup() {
   // Center our drawing objects
   imageMode(CENTER);
   textAlign(CENTER);
-  textSize(24);
+  textSize(size);
+  textFont("Fredoka One");
 
   // set to one for startup
   drawFunction = drawSplash;
+
+  loadStringArray();
 }
 
 // Very simple, sets the background color and calls your state machine function
 function draw() {
   background(186, 219, 209);
+
+  if ((keyIsPressed) && (keyCode === 32)) {
+    textSize(size * 4);
+    lineHeight = 150;
+  }
+  else {
+    textSize(size);
+    lineHeight = 50;
+  }
 
   // will call your state machine function
   drawFunction();
@@ -75,47 +75,67 @@ function draw() {
 
 //-- drawSplash() will draw the image at index 5 from the array
 drawSplash = function() {
-   image(images[5],width/2, height/2);
+  text("Welcome to Sherry's Mood Drawings!!!", width/2, 150);
+  image(images[5], width/2, height/2);
+  text("Click anywhere to get to the next page", width/2, height - 150);
+}
+
+//-- drawInstruction() will draw the text from the string array
+drawInstruction = function() {
+  fill(0);
+  for( let i = 0 ; i < strings.length; i++) {
+      text( strings[i], width/2, 200 + (i * lineHeight) )
+  }
 }
 
 //-- drawOne() will draw the image at index 0 from the array
 drawOne = function() {
-   image(images[0],width/2, height/2);
+  image(images[0], width/2, height/2);
 
-   fill(138, 103, 54);
-   text("Hungry", width/2, height - gTextOffset);
+  fill(94,62,22);
+  text("H U N G R Y", width - mouseX, height - mouseY);
+
+  instruction();
 }
 
 //-- drawTwo() will draw the image at index 1 from the array
 drawTwo = function() {
-   image(images[1],width/2, height/2);
+  image(images[1], width/2, height/2);
 
-   fill(9, 53, 79);
-   text("Lazy", width/2, height - gTextOffset);
+  fill(3, 35, 40);
+  text("L A Z Y", width - mouseX, height - mouseY);
+
+  instruction();
 }
 
 //-- drawOne() will draw the image at index 2 from the array
 drawThree = function() {
-   image(images[2],width/2, height/2);
+  image(images[2], width/2, height/2);
 
-   fill(207, 120, 6);
-   text("Silly", width/2, height - gTextOffset);
+  fill(207, 120, 6);
+  text("S I L L Y", width - mouseX, height - mouseY);
+
+  instruction();
 }
 
 //-- drawOne() will draw the image at index 3 from the array
 drawFour = function() {
-   image(images[3],width/2, height/2);
+  image(images[3], width/2, height/2);
 
-   fill(105, 100, 93);
-   text("Nervous", width/2, height - gTextOffset);
+  fill(105, 100, 93);
+  text("N E R V O U S", width - mouseX, height - mouseY);
+
+  instruction();
 }
 
 //-- drawOne() will draw the image at index 4 from the array
 drawFive = function() {
-   image(images[4],width/2, height/2);
+  image(images[4], width/2, height/2);
 
-   fill(60);
-   text("Cool", width/2, height - gTextOffset);
+  fill(60);
+  text("C O O L", width - mouseX, height - mouseY);
+
+  instruction();
 }
 
 
@@ -146,11 +166,32 @@ function keyTyped() {
   else if( key === 's' ) {
     drawFunction = drawSplash;
   }
+
+  else if( key === 'i' ) {
+    drawFunction = drawInstruction;
+  }
 }
 
 function mousePressed() {
-  // only change state if we are in splash screen
+  // change state if we are in splash screen and instruction page
   if( drawFunction === drawSplash ) {
+    drawFunction = drawInstruction;
+  }
+  else if( drawFunction === drawInstruction ) {
     drawFunction = drawOne;
   }
+}
+
+function loadStringArray() {
+  strings[0] = "Instructions";
+  strings[1] = "-------------";
+  strings[2] = "Press any number [1]-[5] to see my mood drawings.";
+  strings[3] = "Press [s] to go back to the splash page.";
+  strings[4] = "Press [i] to go back to this instruction page.";
+  strings[5] = "Press [SPACE] to make the text large.";
+}
+
+function instruction() {
+  textSize(24);
+  text("Press [i] to go back to instruction page.", width - 300, 50);
 }
